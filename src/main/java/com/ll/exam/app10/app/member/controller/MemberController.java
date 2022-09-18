@@ -74,7 +74,7 @@ public class MemberController {
 
     @GetMapping("/profile/img/{id}")
     public ResponseEntity<Object> showProfileImg(@PathVariable Long id) throws URISyntaxException {
-        String profileImgUrl = memberService.getMemberById(id).getProfileImg();
+        String profileImgUrl = memberService.getMemberById(id).getProfileImgUrl();
 
         // 프로필 이미지없는 경우 기본 프로필 이미지 설정
         if(profileImgUrl == null) {
@@ -86,6 +86,7 @@ public class MemberController {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setLocation(redirectUri);
         httpHeaders.setCacheControl(CacheControl.maxAge(60 * 60 * 1, TimeUnit.SECONDS));
+
         return new ResponseEntity<>(httpHeaders, HttpStatus.FOUND);
     }
 

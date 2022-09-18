@@ -2,23 +2,15 @@ package com.ll.exam.app10.app.member.service;
 
 import com.ll.exam.app10.app.member.entity.Member;
 import com.ll.exam.app10.app.member.repository.MemberRepository;
-import com.ll.exam.app10.app.security.dto.MemberContext;
 import com.ll.exam.app10.util.Util;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -37,7 +29,7 @@ public class MemberService {
         return "member/" + Util.date.getCurrentDateFormatted("yyyy_MM_dd");
     }
 
-    public Member join(String username, String password, String email, MultipartFile profileImg) {
+    private String saveProfileImg(MultipartFile profileImg) {
         String profileImgDirName = getCurrentProfileImgDirName();
 
         String ext = Util.file.getExt(profileImg.getOriginalFilename());
@@ -55,6 +47,12 @@ public class MemberService {
         }
 
         String profileImgRelPath = profileImgDirName + "/" + fileName;
+
+        return profileImgRelPath;
+    }
+
+    public Member join(String username, String password, String email, MultipartFile profileImg) {
+        String profileImgRelPath = saveProfileImg(profileImg);
 
         Member member = Member.builder()
                 .username(username)
@@ -91,7 +89,8 @@ public class MemberService {
     }
 
     public void removeProfileImg(Member member) {
-        member.removeProfileImgOnStorage(); // 파일삭제
+        // 프로필 이미지가 저장된 로컬 디렉토리에서 이미지 삭제, DB의 profileImg 삭제
+        member.removeProfileImgOnStorage();
         member.setProfileImg(null);
 
         memberRepository.save(member);
@@ -100,6 +99,16 @@ public class MemberService {
     public void setProfileImgByUrl(Member member, String url) {
         String filePath = Util.file.downloadImg(url, genFileDirPath + "/" + getCurrentProfileImgDirName() + "/" + UUID.randomUUID());
         member.setProfileImg(getCurrentProfileImgDirName() + "/" + new File(filePath).getName());
+        memberRepository.save(member);
+    }
+
+    @Transactional
+    public void modify(Member member, String email, MultipartFile profileImg) {
+        removeProfileImg(member);
+        String profileImgRelPath = saveProfileImg(profileImg);
+
+        member.setEmail(email);
+        member.setProfileImg(profileImgRelPath);
         memberRepository.save(member);
     }
 }

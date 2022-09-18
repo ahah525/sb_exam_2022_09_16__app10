@@ -74,7 +74,15 @@ public class MemberController {
 
     @GetMapping("/profile/img/{id}")
     public ResponseEntity<Object> showProfileImg(@PathVariable Long id) throws URISyntaxException {
-        URI redirectUri = new URI(memberService.getMemberById(id).getProfileImgUrl());
+        String profileImgUrl = memberService.getMemberById(id).getProfileImg();
+
+        // 프로필 이미지없는 경우 기본 프로필 이미지 설정
+        if(profileImgUrl == null) {
+            profileImgUrl = "https://via.placeholder.com/100x100.png?text=U_U";
+        }
+
+        URI redirectUri = new URI(profileImgUrl);
+
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setLocation(redirectUri);
         httpHeaders.setCacheControl(CacheControl.maxAge(60 * 60 * 1, TimeUnit.SECONDS));

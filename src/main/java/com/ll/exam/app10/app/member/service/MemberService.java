@@ -30,6 +30,11 @@ public class MemberService {
     }
 
     private String saveProfileImg(MultipartFile profileImg) {
+        // 프로필 이미지가 없으면 저장X
+        if(profileImg == null || profileImg.isEmpty()) {
+            return null;
+        }
+
         String profileImgDirName = getCurrentProfileImgDirName();
 
         String ext = Util.file.getExt(profileImg.getOriginalFilename());

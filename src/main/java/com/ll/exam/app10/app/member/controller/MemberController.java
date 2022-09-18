@@ -91,8 +91,12 @@ public class MemberController {
     // 회원 정보 수정
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/modify")
-    public String modify(@AuthenticationPrincipal MemberContext memberContext, String email, MultipartFile profileImg){
+    public String modify(@AuthenticationPrincipal MemberContext memberContext, String email, MultipartFile profileImg, String profileImg__delete){
         Member member = memberService.getMemberById(memberContext.getId());
+
+        if(profileImg__delete != null && profileImg__delete.equals("Y")) {
+            memberService.removeProfileImg(member);
+        }
 
         memberService.modify(member, email, profileImg);
 

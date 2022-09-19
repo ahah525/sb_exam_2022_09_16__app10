@@ -40,4 +40,8 @@ public class Member extends BaseEntity {
 
         return "/gen/" + profileImg;
     }
+
+    public Member(long id) {
+        super(id);
+    }
 }

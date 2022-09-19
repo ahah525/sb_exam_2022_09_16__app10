@@ -11,13 +11,13 @@ import org.springframework.stereotype.Service;
 public class ArticleService {
     private final ArticleRepository articleRepository;
 
-    public void write(Long authorId, String subject, String content) {
+    public Article write(Long authorId, String subject, String content) {
         Article article = Article.builder()
                 .subject(subject)
                 .content(content)
                 .author(new Member(authorId))
                 .build();
 
-        articleRepository.save(article);
+        return articleRepository.save(article);
     }
 }

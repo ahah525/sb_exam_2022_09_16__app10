@@ -5,7 +5,6 @@ import com.ll.exam.app10.app.member.entity.Member;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 
@@ -17,7 +16,6 @@ import javax.persistence.ManyToOne;
 @NoArgsConstructor
 @ToString(callSuper = true) // 상속받은 클래스 정보까지 출력
 public class Article extends BaseEntity {
-    @Column(unique = true)
     private String subject;
     private String content;
 

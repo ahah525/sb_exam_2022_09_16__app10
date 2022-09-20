@@ -42,8 +42,9 @@ public class ArticleService {
 
         Map<String, GenFile> genFileMap = genFileService.getRelGenFileMap(article);
 
-        article.getExtra().put("age", 22);  // 나이 추가
-        article.getExtra().put("genFile", genFileMap);  // 게시글과 관련된 파일들
+//        article.getExtra().put("age", 22);
+        article.getExtra().put("age__name", 22);    // 나이 추가
+        article.getExtra().put("genFileMap", genFileMap);  // 게시글과 관련된 파일들
 
         return article;
     }

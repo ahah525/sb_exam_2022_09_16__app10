@@ -15,8 +15,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -141,5 +143,19 @@ public class GenFileService {
         file.getParentFile().mkdirs();
 
         downloadedFile.renameTo(file);
+    }
+
+    public Map<String, GenFile> getRelGenFileMap(Article article) {
+        // 해당 게시글과 관련된 파일 리스트 조회
+        List<GenFile> genFiles = genFileRepository.findByRelTypeCodeAndRelId("article", article.getId());
+
+        // Map 으로 반환
+        return genFiles
+                .stream()
+                .collect(Collectors.toMap(
+                        // TODO: key =
+                        genFile -> genFile.getTypeCode() + "__" + genFile.getType2Code() + "__" + genFile.getFileNo(),
+                        genFile -> genFile
+                ));
     }
 }

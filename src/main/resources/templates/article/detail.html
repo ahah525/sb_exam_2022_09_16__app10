@@ -30,16 +30,10 @@
             내용 : [[${article.content}]]
         </div>
 
-<!--        <div th:each="genFile : ${article.extra.get('genFile')}">-->
-<!--            <div th:text="${genFile.fileDir}"></div>-->
-<!--&lt;!&ndash;            <img class="w-10 h-10 object-cover rounded" th:src="@{|/gen/${genFile.fileDir}/${genFile.originalFileName}|}" alt="">&ndash;&gt;-->
-<!--        </div>-->
-        <div>
-            <img th:src="@{${article.extra.genFileMap.common\_\_inBody\_\_1.url}}" alt="">
-        </div>
-
-        <div>
-            <img th:src="@{${article.extra.genFileMap.common\_\_inBody\_\_2.url}}" alt="">
+        <div th:each="entry : ${article.extra.genFileMap}">
+<!--            [[${entry.key}]]-->
+<!--            [[${entry.value}]]-->
+            <img th:src="@{${entry.value.url}}" alt="">
         </div>
     </div>
 </section>

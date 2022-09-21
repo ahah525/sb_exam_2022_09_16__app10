@@ -8,6 +8,7 @@ import com.ll.exam.app10.app.fileUpload.repository.GenFileRepository;
 import com.ll.exam.app10.util.Util;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -24,6 +25,29 @@ public class GenFileService {
 
     private String getCurrentDirName(String relTypeCode) {
         return relTypeCode + "/" + Util.date.getCurrentDateFormatted("yyyy_MM_dd");
+    }
+
+    @Transactional
+    public GenFile save(GenFile genFile) {
+        Optional<GenFile> opOldGenFile = genFileRepository.findByRelTypeCodeAndRelIdAndTypeCodeAndType2CodeAndFileNo(genFile.getRelTypeCode(), genFile.getRelId(), genFile.getTypeCode(), genFile.getType2Code(), genFile.getFileNo());
+        // 해당 게시글의 이미지 번호에 이미 파일이 있는지 검사
+        if(opOldGenFile.isPresent()) {
+            GenFile oldGenFile = opOldGenFile.get();    // 수정전 파일
+            deleteFileFromStorage(oldGenFile);
+
+            oldGenFile.merge(genFile);
+            genFileRepository.save(oldGenFile);
+
+            return oldGenFile;
+        }
+        genFileRepository.save(genFile);
+
+        return genFile;
+    }
+
+    // 로컬 저장소에서 삭제
+    private void deleteFileFromStorage(GenFile genFile) {
+        new File(genFile.getFilePath()).delete();
     }
 
     public RsData<Map<String, GenFile>> saveFiles(Article article, Map<String, MultipartFile> fileMap) {
@@ -76,7 +100,7 @@ public class GenFileService {
                     .originFileName(originFileName)
                     .build();
 
-            genFileRepository.save(genFile);
+            genFile = save(genFile);
 
             // 로컬 저장 파일 경로
             String filePath = AppConfig.GET_FILE_DIR_PATH + "/" + fileDir +  "/" + genFile.getFileName();
@@ -131,7 +155,7 @@ public class GenFileService {
                 .originFileName(originFileName)
                 .build();
 
-        genFileRepository.save(genFile);
+        genFile = save(genFile);
 
         String filePath = AppConfig.GET_FILE_DIR_PATH + "/" + fileDir + "/" + genFile.getFileName();
 

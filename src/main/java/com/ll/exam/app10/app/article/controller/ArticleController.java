@@ -15,7 +15,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartRequest;
@@ -42,10 +41,7 @@ public class ArticleController {
     // 게시글 작성
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/write")
-    public String write(@AuthenticationPrincipal MemberContext memberContext, @Valid ArticleForm articleForm, BindingResult bindingResult, MultipartRequest multipartRequest) {
-        if(bindingResult.hasErrors()) {
-            return "article/write";
-        }
+    public String write(@AuthenticationPrincipal MemberContext memberContext, @Valid ArticleForm articleForm, MultipartRequest multipartRequest) {
 
         Map<String, MultipartFile> fileMap = multipartRequest.getFileMap();
 
@@ -90,13 +86,18 @@ public class ArticleController {
     // 게시글 수정
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/{id}/modify")
-    public String modify(@AuthenticationPrincipal MemberContext memberContext, Model model, @PathVariable Long id, @Valid ArticleForm articleForm) {
+    @ResponseBody   // 테스트용으로 잠깐 붙임
+    public String modify(@AuthenticationPrincipal MemberContext memberContext, Model model, @PathVariable Long id, @Valid ArticleForm articleForm, MultipartRequest multipartRequest) {
         Article article = articleService.getForPrintArticleById(id);
 
         // 작성자인지 검증
         if (memberContext.memberIsNot(article.getAuthor())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
+
+        Map<String, MultipartFile> fileMap = multipartRequest.getFileMap();
+
+        RsData<Map<String, GenFile>> saveFilesRsData = genFileService.saveFiles(article, fileMap);
 
         articleService.modify(article, articleForm.getSubject(), articleForm.getContent());
 

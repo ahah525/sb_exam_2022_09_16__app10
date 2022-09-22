@@ -1,4 +1,4 @@
-package com.ll.exam.app10.app.fileUpload.entity;
+package com.ll.exam.app10.app.gen.entity;
 
 import com.ll.exam.app10.app.base.AppConfig;
 import com.ll.exam.app10.app.base.entity.BaseEntity;

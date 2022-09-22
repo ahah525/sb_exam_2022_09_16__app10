@@ -1,10 +1,10 @@
-package com.ll.exam.app10.app.fileUpload.service;
+package com.ll.exam.app10.app.gen.service;
 
 import com.ll.exam.app10.app.article.entity.Article;
 import com.ll.exam.app10.app.base.AppConfig;
 import com.ll.exam.app10.app.base.dto.RsData;
-import com.ll.exam.app10.app.fileUpload.entity.GenFile;
-import com.ll.exam.app10.app.fileUpload.repository.GenFileRepository;
+import com.ll.exam.app10.app.gen.entity.GenFile;
+import com.ll.exam.app10.app.gen.repository.GenFileRepository;
 import com.ll.exam.app10.util.Util;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

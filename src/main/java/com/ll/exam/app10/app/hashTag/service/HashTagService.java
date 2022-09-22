@@ -49,4 +49,8 @@ public class HashTagService {
 
         return hashTag;
     }
+
+    public List<HashTag> getHashTags(Article article) {
+        return hashTagRepository.findAllByArticleId(article.getId());
+    }
 }

@@ -224,4 +224,8 @@ public class GenFileService {
         // DB에서 삭제
         genFileRepository.delete(genFile);
     }
+
+    public Optional<GenFile> getById(Long id) {
+        return genFileRepository.findById(id);
+    }
 }

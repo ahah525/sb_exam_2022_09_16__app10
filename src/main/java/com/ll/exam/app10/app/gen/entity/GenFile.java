@@ -39,6 +39,10 @@ public class GenFile extends BaseEntity {
         return AppConfig.GET_FILE_DIR_PATH + "/" + fileDir + "/" + getFileName();
     }
 
+    public String getDownloadUrl() {
+        return "/download/gen/" + getId();
+    }
+
     // 새로운 파일로 정보 변경
     public void merge(GenFile other) {
         relTypeCode = other.getRelTypeCode();

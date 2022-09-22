@@ -19,12 +19,12 @@ import java.util.stream.Collectors;
 public class HashTagService {
     private final KeywordService keywordService;
     private final HashTagRepository hashTagRepository;
-    public void applyHashTags(Article article, String hashTagsStr) {
+    public void applyHashTags(Article article, String hashTagContents) {
         // 1. 기존 해시태그 가져오기
         List<HashTag> oldHashTags = getHashTags(article);
 
         // 2. 새 해시태그 리스트로 만들기
-        List<String> keywordContents = Arrays.stream(hashTagsStr.split("#"))
+        List<String> keywordContents = Arrays.stream(hashTagContents.split("#"))
                 .map(String::trim)
                 .filter(s -> s.length() > 0)
                 .collect(Collectors.toList());

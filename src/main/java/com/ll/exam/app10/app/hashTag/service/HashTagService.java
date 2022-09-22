@@ -8,6 +8,7 @@ import com.ll.exam.app10.app.keyword.service.KeywordService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -19,13 +20,36 @@ public class HashTagService {
     private final KeywordService keywordService;
     private final HashTagRepository hashTagRepository;
     public void applyHashTags(Article article, String hashTagsStr) {
-        // 분리할 해시태그 리스트
+        // 1. 기존 해시태그 가져오기
+        List<HashTag> oldHashTags = getHashTags(article);
+
+        // 2. 새 해시태그 리스트로 만들기
         List<String> keywordContents = Arrays.stream(hashTagsStr.split("#"))
                 .map(String::trim)
                 .filter(s -> s.length() > 0)
                 .collect(Collectors.toList());
 
+        // 3. 삭제할 키워드 계산
+        List<HashTag> needToDelete = new ArrayList<>();
+
+        for(HashTag oldHashTag : oldHashTags) {
+            // 기존에 등록된 해시태그가 새롭게 등록된 해시태그에 포함되었는지 여부
+            boolean contains = keywordContents.stream().anyMatch(s -> s.equals(oldHashTag.getKeyword().getContent()));
+
+            if(!contains) {
+                needToDelete.add(oldHashTag);
+            }
+        }
+
+        // 4. 해시태그 삭제
+        needToDelete.forEach(hashTag -> {
+            System.out.println("hashTag = " + hashTag.getKeyword().getContent());
+            hashTagRepository.delete(hashTag);
+        });
+
+        // 5. 추가할 키워드 계산
         keywordContents.forEach(keywordContent -> {
+            System.out.println("keywordContent = " + keywordContent);
             saveHashTag(article, keywordContent);
         });
     }

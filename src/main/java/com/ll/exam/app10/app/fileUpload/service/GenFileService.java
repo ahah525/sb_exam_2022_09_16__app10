@@ -183,4 +183,45 @@ public class GenFileService {
                         LinkedHashMap::new
                 ));
     }
+
+    public void deleteFiles(Article article, Map<String, String> params) {
+        // delete___common__inBody__1 에서 common__inBody__1 만 추출하기
+        List<String> deleteFilesArgs = params.keySet()
+                .stream()
+                .filter(key -> key.startsWith("delete___"))
+                .map(key -> key.replace("delete___", ""))
+                .collect(Collectors.toList());
+
+        deleteFiles(article, deleteFilesArgs);
+    }
+
+    public void deleteFiles(Article article, List<String> params) {
+        System.out.println(params);
+
+        String relTypeCode = "article";
+        Long relId = article.getId();
+
+        params
+                .stream()
+                .forEach(key -> {
+                    String[] keyBits = key.split("__");
+
+                    String typeCode = keyBits[0];
+                    String type2Code = keyBits[1];
+                    int fileNo = Integer.parseInt(keyBits[2]);
+
+                    Optional<GenFile> optGenFile = genFileRepository.findByRelTypeCodeAndRelIdAndTypeCodeAndType2CodeAndFileNo(relTypeCode, relId, typeCode, type2Code, fileNo);
+
+                    if(optGenFile.isPresent()) {
+                        delete(optGenFile.get());
+                    }
+                });
+    }
+
+    private void delete(GenFile genFile) {
+        // 로컬 저장소에서 삭제
+        deleteFileFromStorage(genFile);
+        // DB에서 삭제
+        genFileRepository.delete(genFile);
+    }
 }

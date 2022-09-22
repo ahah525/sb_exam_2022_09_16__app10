@@ -87,8 +87,14 @@ public class ArticleController {
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/{id}/modify")
     @ResponseBody   // 테스트용으로 잠깐 붙임
-    public String modify(@AuthenticationPrincipal MemberContext memberContext, Model model, @PathVariable Long id, @Valid ArticleForm articleForm, MultipartRequest multipartRequest) {
+    public String modify(@AuthenticationPrincipal MemberContext memberContext,
+                         Model model, @PathVariable Long id,
+                         @Valid ArticleForm articleForm,
+                         MultipartRequest multipartRequest,
+                         @RequestParam Map<String, String> params) {
         Article article = articleService.getForPrintArticleById(id);
+
+        genFileService.deleteFiles(article, params);
 
         // 작성자인지 검증
         if (memberContext.memberIsNot(article.getAuthor())) {

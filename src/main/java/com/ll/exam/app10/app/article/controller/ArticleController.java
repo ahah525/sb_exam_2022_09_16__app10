@@ -58,7 +58,6 @@ public class ArticleController {
     }
 
     // 게시글 상세조회
-    @PreAuthorize("isAuthenticated()")
     @GetMapping("/{id}")
     public String showDetail(Model model, @PathVariable Long id) {
         Article article = articleService.getForPrintArticleById(id);

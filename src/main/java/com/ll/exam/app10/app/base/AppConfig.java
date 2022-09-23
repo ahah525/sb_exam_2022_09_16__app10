@@ -10,5 +10,5 @@ public class AppConfig {
     @Value("${custom.genFileDirPath}")
     public void setFileDirPath(String genFileDirPath) {
         GET_FILE_DIR_PATH = genFileDirPath;
-    };
+    }
 }

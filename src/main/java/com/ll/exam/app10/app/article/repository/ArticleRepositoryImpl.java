@@ -15,7 +15,7 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public List<Article> findAllByKwTypeAndKw(String kwType, String kw) {
+    public List<Article> getQslArticlesOrderByIdDesc(String kwType, String kw) {
         return jpaQueryFactory
                 .select(article)
                 .distinct()

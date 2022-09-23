@@ -73,7 +73,6 @@ public class ArticleService {
     }
 
     public List<Article> getArticles(String kwType, String kw) {
-        return articleRepository.findAllByKwTypeAndKw(kwType, kw);
-//        return articleRepository.findAll();
+        return articleRepository.getQslArticlesOrderByIdDesc(kwType, kw);
     }
 }

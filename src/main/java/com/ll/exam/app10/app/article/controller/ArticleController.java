@@ -85,7 +85,6 @@ public class ArticleController {
     // 게시글 수정
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/{id}/modify")
-    @ResponseBody   // 테스트용으로 잠깐 붙임
     public String modify(@AuthenticationPrincipal MemberContext memberContext,
                          Model model, @PathVariable Long id,
                          @Valid ArticleForm articleForm,
@@ -104,9 +103,10 @@ public class ArticleController {
 
         RsData<Map<String, GenFile>> saveFilesRsData = genFileService.saveFiles(article, fileMap);
 
-        articleService.modify(article, articleForm.getSubject(), articleForm.getContent());
+        articleService.modify(article, articleForm.getSubject(), articleForm.getContent(), articleForm.getHashTagContents());
 
         String msg = Util.url.encode("%d번 게시물이 수정되었습니다.".formatted(id));
+
         return "redirect:/article/%d?msg=%s".formatted(id, msg);
     }
 

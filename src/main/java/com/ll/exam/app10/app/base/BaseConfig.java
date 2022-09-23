@@ -8,6 +8,7 @@ import javax.persistence.EntityManager;
 
 @Configuration
 public class BaseConfig {
+    // QueryDSL
     @Bean
     public JPAQueryFactory jpaQueryFactory(EntityManager entityManager) {
         return new JPAQueryFactory(entityManager);

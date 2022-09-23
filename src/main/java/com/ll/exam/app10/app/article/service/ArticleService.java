@@ -72,7 +72,8 @@ public class ArticleService {
         hashTagService.applyHashTags(article, hashTagContents);
     }
 
-    public List<Article> getArticles() {
-        return articleRepository.findAll();
+    public List<Article> getArticles(String kwType, String kw) {
+        return articleRepository.findAllByKwTypeAndKw(kwType, kw);
+//        return articleRepository.findAll();
     }
 }

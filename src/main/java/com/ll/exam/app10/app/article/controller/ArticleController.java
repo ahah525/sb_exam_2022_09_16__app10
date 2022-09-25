@@ -72,6 +72,9 @@ public class ArticleController {
     public String showList(@RequestParam(defaultValue = "") String kwType, @RequestParam(defaultValue = "") String kw,  Model model) {
         List<Article> articles = articleService.search(kwType, kw);
 
+        for ( Article article : articles ) {
+            articleService.loadForPrintData(article);
+        }
 
         model.addAttribute("articles", articles);
 

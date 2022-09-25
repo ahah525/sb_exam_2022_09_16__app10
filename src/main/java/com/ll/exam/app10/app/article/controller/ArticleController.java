@@ -69,8 +69,8 @@ public class ArticleController {
 
     // 개사굴 리스트 조회
     @GetMapping("/list")
-    public String showList(@RequestParam String kwType, @RequestParam String kw,  Model model) {
-        List<Article> articles = articleService.getArticles(kwType, kw);
+    public String showList(@RequestParam(defaultValue = "") String kwType, @RequestParam(defaultValue = "") String kw,  Model model) {
+        List<Article> articles = articleService.search(kwType, kw);
 
 
         model.addAttribute("articles", articles);

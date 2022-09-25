@@ -72,7 +72,11 @@ public class ArticleService {
         hashTagService.applyHashTags(article, hashTagContents);
     }
 
-    public List<Article> getArticles(String kwType, String kw) {
-        return articleRepository.getQslArticlesOrderByIdDesc(kwType, kw);
+    public List<Article> getArticles() {
+        return articleRepository.getQslArticlesOrderByIdDesc();
+    }
+
+    public List<Article> search(String kwType, String kw) {
+        return articleRepository.searchQsl(kwType, kw);
     }
 }

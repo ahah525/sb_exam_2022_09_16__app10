@@ -8,13 +8,18 @@ import com.ll.exam.app10.app.hashTag.entity.HashTag;
 import com.ll.exam.app10.app.hashTag.service.HashTagService;
 import com.ll.exam.app10.app.member.entity.Member;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
 
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toList;
+
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ArticleService {
     private final ArticleRepository articleRepository;
     private final GenFileService genFileService;
@@ -82,5 +87,46 @@ public class ArticleService {
 
         article.getExtra().put("hashTags", hashTags);
         article.getExtra().put("genFileMap", genFileMap);  // 게시글과 관련된 파일들
+    }
+
+    public void loadForPrintData(List<Article> articles) {
+        // article id 리스트
+        long[] ids = articles
+                .stream()
+                .mapToLong(Article::getId)
+                .toArray();
+        // 해당 article id와 관련된 모든 hashTag 를 article id를 key로 하여 map으로 변환
+        List<HashTag> hashTagsByArticleIds = hashTagService.getHashTagsByArticleIdIn(ids);
+
+        Map<Long, List<HashTag>> hashTagsByArticleIdsMap = hashTagsByArticleIds.stream()
+                .collect(groupingBy(
+                        hashTag -> hashTag.getArticle().getId(), toList()
+                ));
+        // 각 게시글과 관련된 해시태그 저장
+        articles.stream().forEach(article -> {
+            List<HashTag> hashTags = hashTagsByArticleIdsMap.get(article.getId());
+
+            if(hashTags == null || hashTags.size() == 0) return;
+
+            article.getExtra().put("hashTags", hashTags);
+        });
+
+        // 해당 article id와 관련된 모든 genFile 을 article id를 key로 하여 map으로 변환
+        List<GenFile> genFilesByRelIdIn = genFileService.getRelGenFilesByRelIdIn("article", ids);
+
+        Map<Long, List<GenFile>> genFilesMap = genFilesByRelIdIn.stream()
+                .collect(groupingBy(
+                        genFile -> genFile.getRelId(), toList()
+                ));
+        // 각 게시글과 관련된 파일 저장
+        articles.stream().forEach(article -> {
+            List<GenFile> genFiles = genFilesMap.get(article.getId());
+
+            if(genFiles == null || genFiles.size() == 0) return;
+
+            article.getExtra().put("genFileMap", genFileService.getRelGenFileMap(genFiles));
+        });
+
+        log.debug("articles : " + articles);
     }
 }

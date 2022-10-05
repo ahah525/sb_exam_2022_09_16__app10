@@ -9,5 +9,8 @@ import java.util.Optional;
 public interface HashTagRepository extends JpaRepository<HashTag, Long> {
 
     Optional<HashTag> findByArticleIdAndKeywordId(Long articleId, Long keywordId);
+
     List<HashTag> findAllByArticleId(Long articleId);
+
+    List<HashTag> findAllByArticleIdIn(long[] ids);
 }

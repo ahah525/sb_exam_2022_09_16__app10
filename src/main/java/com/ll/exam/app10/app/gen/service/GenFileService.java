@@ -171,6 +171,10 @@ public class GenFileService {
         // 해당 게시글과 관련된 파일 리스트 조회
         List<GenFile> genFiles = genFileRepository.findByRelTypeCodeAndRelIdOrderByTypeCodeAscType2CodeAscFileNoAsc("article", article.getId());
 
+        return getRelGenFileMap(genFiles);
+    }
+
+    public Map<String, GenFile> getRelGenFileMap(List<GenFile> genFiles) {
         // Map 으로 반환
         return genFiles
                 .stream()
@@ -227,5 +231,9 @@ public class GenFileService {
 
     public Optional<GenFile> getById(Long id) {
         return genFileRepository.findById(id);
+    }
+
+    public List<GenFile> getRelGenFilesByRelIdIn(String relTypeCode, long[] relIds) {
+        return genFileRepository.findAllByRelTypeCodeAndRelIdInOrderByTypeCodeAscType2CodeAscFileNoAsc(relTypeCode, relIds);
     }
 }

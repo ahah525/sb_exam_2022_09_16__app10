@@ -42,7 +42,14 @@ public class MemberController {
 
     @PreAuthorize("isAnonymous()")
     @GetMapping("/login")
-    public String showLogin() {
+    public String showLogin(HttpServletRequest request) {
+        // 로그인 페이지에 오기 전 페이지의 url
+        String uri = request.getHeader("Referer");
+        // 이전 페이지 url 저장
+        if (uri != null && !uri.contains("/member/login")) {
+            request.getSession().setAttribute("prevPage", uri);
+        }
+
         return "member/login";
     }
 
